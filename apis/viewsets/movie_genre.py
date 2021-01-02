@@ -13,14 +13,14 @@ class MovieCreateListRetrieveViewSet(mixins.CreateModelMixin,
                                      viewsets.GenericViewSet):
     permission_classes = []
     serializer_class = MovieDataSerializer
-    queryset = Movie.objects.all()
+    queryset = Movie.objects.prefetch_related('genre').all()
     filter_backends = [filters.SearchFilter]
     search_fields = ["name", "director", "genre__title"]
 
     def get_permissions(self):
         if not (self.action == "list" or self.action == "retrieve"):
             return [IsAdminUser()]
-        return [IsAuthenticated()]
+        return self.permission_classes
 
     def get_serializer_class(self):
         if not (self.action == "list" or self.action == "retrieve"):
